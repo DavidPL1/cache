@@ -63,6 +63,8 @@ If you are using a `self-hosted` Windows runner, `GNU tar` and `zstd` are requir
 
 * `SEGMENT_DOWNLOAD_TIMEOUT_MINS` - Segment download timeout (in minutes, default `10`) to abort download of the segment if not completed in the defined number of minutes. [Read more](https://github.com/actions/cache/blob/main/tips-and-workarounds.md#cache-segment-restore-timeout)
 
+* `GHA_CACHE_SAVE` - Controls when to save cache. By default, a new cache is created if the job completes successfully. If this variable is set to `always`, the cache is saved also on job failure. If set to `never`, the cache is never saved, i.e. realizing read-only cache.
+
 ### Outputs
 
 * `cache-hit` - A boolean value to indicate an exact match was found for the key.
@@ -151,6 +153,8 @@ jobs:
 ## Caching Strategies
 
 With the introduction of the `restore` and `save` actions, a lot of caching use cases can now be achieved. Please see the [caching strategies](./caching-strategies.md) document for understanding how you can use the actions strategically to achieve the desired goal.
+> Note: You must use the `cache` action in your workflow _before_ you need to use the files that might be restored from the cache. If the provided `key` matches an existing cache exactly, a new cache is not created. Include `${{github.run_id}}` as the last component of your `key` to save the cache in each workflow run.
+If the provided `key` doesn't match an existing cache exactly, a new cache is automatically created provided the job completes successfully. This behavior can be changed with the environment variable `GHA_CACHE_SAVE` ([see above](#environment-variables)).
 
 ## Implementation Examples
 
